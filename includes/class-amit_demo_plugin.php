@@ -130,6 +130,10 @@ class Amit_demo_plugin
 
 		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-amit_demo_plugin-settings.php';
 
+		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-amit_demo_plugin-guest-directory.php';
+
+		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-amit_demo_plugin-guest-directory-shortcode.php';
+
 		$this->loader = new Amit_demo_plugin_Loader();
 
 	}
@@ -165,6 +169,7 @@ class Amit_demo_plugin
 		$plugin_admin = new Amit_demo_plugin_Admin($this->get_plugin_name(), $this->get_version());
 		$post_type_events = new Amit_demo_plugin_Post_Type_And_Taxonomies_Events();
 		$plugin_settings = new Amit_demo_plugin_Settings_Page();
+		$guest_directory = new Amit_demo_plugin_Guest_Directory();
 
 		$this->loader->add_action('admin_menu', $plugin_settings, 'add_settings_page');
 		$this->loader->add_action('admin_init', $plugin_settings, 'register_settings');
@@ -174,6 +179,8 @@ class Amit_demo_plugin
 		$this->loader->add_action('save_post', $post_type_events, 'save_event_meta_fields');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+
+		$this->loader->add_action('admin_menu', $guest_directory, 'add_admin_menu');
 	}
 
 	/**
@@ -187,12 +194,15 @@ class Amit_demo_plugin
 	{
 		$plugin_public = new Amit_demo_plugin_Public($this->get_plugin_name(), $this->get_version());
 		$filter_events_shortcode = new Amit_demo_plugin_Filter_Events_Shortcode();
+		$guest_directory_shortcode = new Amit_demo_plugin_Guest_Directory_Shortcode();
 
 		$this->loader->add_action('wp_ajax_filter_events', $filter_events_shortcode, 'filter_events_ajax');
 		$this->loader->add_action('wp_ajax_nopriv_filter_events', $filter_events_shortcode, 'filter_events_ajax');
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
 		$this->loader->add_shortcode('filter_events', $filter_events_shortcode, 'render_filter_events_shortcode');
+
+		$this->loader->add_shortcode('guest_directory', $guest_directory_shortcode, 'render_guest_directory');
 	}
 
 	/**
